@@ -19,6 +19,7 @@ extern "C" {
 #endif
 
 #define JSMN_STATIC
+#define JSMN_PARENT_LINKS
 
 #include "l8w8jwt/util.h"
 #include "l8w8jwt/decode.h"
@@ -198,10 +199,16 @@ static int l8w8jwt_parse_claims(chillbuff* buffer, char* json, const size_t json
             }
             case JSMN_OBJECT: {
                 claim.type = L8W8JWT_CLAIM_TYPE_OBJECT;
+                // Skip children...
+                while (tokens[i+1].parent != 0 && i < r)
+                  i++;
                 break;
             }
             case JSMN_ARRAY: {
                 claim.type = L8W8JWT_CLAIM_TYPE_ARRAY;
+                // Skip children...
+                while (tokens[i+1].parent != 0 && i < r)
+                  i++;
                 break;
             }
             case JSMN_STRING: {
